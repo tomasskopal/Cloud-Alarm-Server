@@ -3,8 +3,13 @@
  */
 
 var mongoose = require('mongoose');
-var dbServer = 'mongodb://localhost:27017/cloudAlarm';
-mongoose.connect(dbServer);
+// var dbServer = 'mongodb://localhost:27017/cloudAlarm';
+var options = {
+  user: 'cloud-alarm-user',
+  pass: 'V1BsB9Xg'
+};
+var dbServer = 'dbh62.mongolab.com:27627/heroku_app36021838';
+mongoose.connect(dbServer, options);
 
 
 var db = mongoose.connection;
