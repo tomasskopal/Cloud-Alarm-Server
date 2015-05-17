@@ -10,12 +10,12 @@ var Alarm = require('../models/AlarmModel');
  */
 exports.getAlarms = function(req, res) {
     console.log(req.userId);
-    Alarm.find({ userId: req.userId }, function(err,data) {
+    Alarm.find({ userId: req.userId, deleted: false }, function(err,data) {
         if (err) {
             console.log("Error in finding users" + err);
             return res.send(err);
         }
-        res.status(200).json({ alarms: data });
+        res.status(200).json({ data: data });
     });
 };
 
@@ -33,6 +33,10 @@ exports.postAlarm = [function(req, res, next) {
     function(req, res) {
         var alarm = createNewAlarm(req.body);
         alarm.userId = req.userId;
+
+        if (alarm.deleted === undefined || alarm.deleted == null) {
+            alarm.deleted = false;
+        }
 
         alarm.save(function(err) {
             if (err)
@@ -56,10 +60,12 @@ exports.getAlarm = [function(req, res, next) {
         }
     },
     function(req, res) {
-        Alarm.findOne({ userId: req.userId, _id: req.params.id }, function(err,data) {
-            if (err)
-                return res.send(err);
-            res.status(200).json({ alarm: data });
+        Alarm.findOne(
+            { userId: req.userId, _id: req.params.id, deleted: false },
+            function(err,data) {
+                if (err)
+                    return res.send(err);
+                res.status(200).json({ data: data });
         });
     }
 ];
@@ -68,18 +74,18 @@ exports.getAlarm = [function(req, res, next) {
  * Create endpoint /api/alarms/:id for PUT
  */
 exports.putAlarm = function(req, res) {
-    Alarm.findOne({ userId: req.userId, _id: req.params.id }, function(err,data) {
+    Alarm.findOne({ userId: req.userId, _id: req.params.id }, function(err, data) {
         if (err)
             return res.send(err);
 
         var alarm = copyValuesOfAlarm(data, req.body);
         alarm.userId = req.userId; // password library makes user object in the request
 
-        alarm.save(function(err) {
+        alarm.save(function(err, savedAlarm) {
             if (err)
                 return res.send(err);
 
-            res.status(200).json({ data: data });
+            res.status(200).json({ data: savedAlarm });
         });
     });
 };
@@ -95,10 +101,14 @@ exports.deleteAlarm = [function(req, res, next) {
         }
     },
     function(req, res) {
-        Alarm.findOneAndRemove({ userId: req.userId, _id: req.params.id }, function(err) {
-            if (err)
-                return res.send(err);
-            res.status(200).json("Removed");
+        Alarm.findOneAndUpdate(
+            { userId: req.userId, _id: req.params.id },
+            { deleted: true },
+            function(err) {
+                if (err)
+                    return res.send(err);
+
+                res.status(200).json("Removed");
         });
     }
 ];
@@ -122,5 +132,6 @@ function copyValuesOfAlarm(alarmTo, alarmFrom) {
     alarmTo.enabled = alarmFrom.enabled;
     alarmTo.repeat = alarmFrom.repeat;
     alarmTo.days = alarmFrom.days;
+    alarmTo.deleted = alarmFrom.deleted;
     return alarmTo;
 };
