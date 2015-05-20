@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema; // schema odpovida kolekci ~ tabulka v relacnich dtb
 
 var AlarmSchema = new Schema({
-    _id: Number,
+    uuid: String,
     title: String,
     target: String,
     enabled: Boolean,

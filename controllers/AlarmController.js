@@ -38,11 +38,11 @@ exports.postAlarm = [function(req, res, next) {
             alarm.removed = false;
         }
 
-        alarm.save(function(err) {
+        alarm.save(function(err, data) {
             if (err)
                 return res.send(err);
 
-            res.status(201).json({ message: 'Alarm added to the dtb!', data: alarm });
+            res.status(201).json({ message: 'Alarm added to the dtb!', data: data });
         });
     }
 ];
@@ -61,7 +61,7 @@ exports.getAlarm = [function(req, res, next) {
     },
     function(req, res) {
         Alarm.findOne(
-            { userId: req.userId, _id: req.params.id, removed: false },
+            { userId: req.userId, uuid: req.params.id, removed: false },
             function(err,data) {
                 if (err)
                     return res.send(err);
@@ -74,7 +74,7 @@ exports.getAlarm = [function(req, res, next) {
  * Create endpoint /api/alarms/:id for PUT
  */
 exports.putAlarm = function(req, res) {
-    Alarm.findOne({ userId: req.userId, _id: req.params.id }, function(err, data) {
+    Alarm.findOne({ userId: req.userId, uuid: req.params.id }, function(err, data) {
         if (err)
             return res.send(err);
 
@@ -102,7 +102,7 @@ exports.deleteAlarm = [function(req, res, next) {
     },
     function(req, res) {
         Alarm.findOneAndUpdate(
-            { userId: req.userId, _id: req.params.id },
+            { userId: req.userId, uuid: req.params.id },
             { removed: true },
             function(err) {
                 if (err)
@@ -115,7 +115,7 @@ exports.deleteAlarm = [function(req, res, next) {
 
 function createNewAlarm(requestBody) {
     var alarm = new Alarm();
-    alarm._id = requestBody.id;
+    alarm.uuid = requestBody.uuid;
     alarm.title = requestBody.title;
     alarm.target = requestBody.target;
     alarm.enabled = requestBody.enabled;
