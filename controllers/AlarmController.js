@@ -10,7 +10,7 @@ var Alarm = require('../models/AlarmModel');
  */
 exports.getAlarms = function(req, res) {
     console.log(req.userId);
-    Alarm.find({ userId: req.userId, deleted: false }, function(err,data) {
+    Alarm.find({ userId: req.userId, removed: false }, function(err,data) {
         if (err) {
             console.log("Error in finding users" + err);
             return res.send(err);
@@ -33,9 +33,10 @@ exports.postAlarm = [function(req, res, next) {
     function(req, res) {
         var alarm = createNewAlarm(req.body);
         alarm.userId = req.userId;
+        alarm.lastChanged = new Date();
 
-        if (alarm.deleted === undefined || alarm.deleted == null) {
-            alarm.deleted = false;
+        if (alarm.removed === undefined || alarm.removed == null) {
+            alarm.removed = false;
         }
 
         alarm.save(function(err) {
@@ -61,7 +62,7 @@ exports.getAlarm = [function(req, res, next) {
     },
     function(req, res) {
         Alarm.findOne(
-            { userId: req.userId, _id: req.params.id, deleted: false },
+            { userId: req.userId, _id: req.params.id, removed: false },
             function(err,data) {
                 if (err)
                     return res.send(err);
@@ -80,6 +81,7 @@ exports.putAlarm = function(req, res) {
 
         var alarm = copyValuesOfAlarm(data, req.body);
         alarm.userId = req.userId; // password library makes user object in the request
+        alarm.lastChanged = new Date();
 
         alarm.save(function(err, savedAlarm) {
             if (err)
@@ -103,7 +105,7 @@ exports.deleteAlarm = [function(req, res, next) {
     function(req, res) {
         Alarm.findOneAndUpdate(
             { userId: req.userId, _id: req.params.id },
-            { deleted: true },
+            { removed: true, lastChanged: new Date() },
             function(err) {
                 if (err)
                     return res.send(err);
@@ -121,7 +123,6 @@ function createNewAlarm(requestBody) {
     alarm.minute = requestBody.minute;
     alarm.enabled = requestBody.enabled;
     alarm.repeat = requestBody.repeat;
-    alarm.days = requestBody.days;
     return alarm;
 };
 
@@ -131,7 +132,6 @@ function copyValuesOfAlarm(alarmTo, alarmFrom) {
     alarmTo.minute = alarmFrom.minute;
     alarmTo.enabled = alarmFrom.enabled;
     alarmTo.repeat = alarmFrom.repeat;
-    alarmTo.days = alarmFrom.days;
-    alarmTo.deleted = alarmFrom.deleted;
+    alarmTo.removed = alarmFrom.removed;
     return alarmTo;
 };
