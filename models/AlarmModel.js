@@ -8,8 +8,7 @@ var Schema = mongoose.Schema; // schema odpovida kolekci ~ tabulka v relacnich d
 var AlarmSchema = new Schema({
     _id: Number,
     title: String,
-    hour: Number,
-    minute: Number,
+    target: String,
     enabled: Boolean,
     repeat: [Number],
     userId: String,

@@ -117,8 +117,7 @@ function createNewAlarm(requestBody) {
     var alarm = new Alarm();
     alarm._id = requestBody.id;
     alarm.title = requestBody.title;
-    alarm.hour = requestBody.hour;
-    alarm.minute = requestBody.minute;
+    alarm.target = requestBody.target;
     alarm.enabled = requestBody.enabled;
     alarm.repeat = requestBody.repeat;
     alarm.lastChanged = requestBody.lastChanged;
@@ -127,8 +126,7 @@ function createNewAlarm(requestBody) {
 
 function copyValuesOfAlarm(alarmTo, alarmFrom) {
     alarmTo.title = alarmFrom.title;
-    alarmTo.hour = alarmFrom.hour;
-    alarmTo.minute = alarmFrom.minute;
+    alarmTo.target = alarmFrom.target;
     alarmTo.enabled = alarmFrom.enabled;
     alarmTo.repeat = alarmFrom.repeat;
     alarmTo.removed = alarmFrom.removed;
