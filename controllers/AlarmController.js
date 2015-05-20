@@ -33,7 +33,6 @@ exports.postAlarm = [function(req, res, next) {
     function(req, res) {
         var alarm = createNewAlarm(req.body);
         alarm.userId = req.userId;
-        alarm.lastChanged = new Date();
 
         if (alarm.removed === undefined || alarm.removed == null) {
             alarm.removed = false;
@@ -81,7 +80,6 @@ exports.putAlarm = function(req, res) {
 
         var alarm = copyValuesOfAlarm(data, req.body);
         alarm.userId = req.userId; // password library makes user object in the request
-        alarm.lastChanged = new Date();
 
         alarm.save(function(err, savedAlarm) {
             if (err)
@@ -105,7 +103,7 @@ exports.deleteAlarm = [function(req, res, next) {
     function(req, res) {
         Alarm.findOneAndUpdate(
             { userId: req.userId, _id: req.params.id },
-            { removed: true, lastChanged: new Date() },
+            { removed: true },
             function(err) {
                 if (err)
                     return res.send(err);
@@ -123,6 +121,7 @@ function createNewAlarm(requestBody) {
     alarm.minute = requestBody.minute;
     alarm.enabled = requestBody.enabled;
     alarm.repeat = requestBody.repeat;
+    alarm.lastChanged = requestBody.lastChanged;
     return alarm;
 };
 
@@ -133,5 +132,6 @@ function copyValuesOfAlarm(alarmTo, alarmFrom) {
     alarmTo.enabled = alarmFrom.enabled;
     alarmTo.repeat = alarmFrom.repeat;
     alarmTo.removed = alarmFrom.removed;
+    alarmTo.lastChanged = alarmFrom.lastChanged;
     return alarmTo;
 };

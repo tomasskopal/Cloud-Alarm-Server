@@ -14,7 +14,7 @@ var AlarmSchema = new Schema({
     repeat: [Number],
     userId: String,
     removed: Boolean,
-    lastChanged: Date
+    lastChanged: String
 });
 
 module.exports = mongoose.model('Alarm', AlarmSchema); // model odpovida dokumentu ~ radek v tabulce
