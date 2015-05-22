@@ -10,7 +10,7 @@ var Alarm = require('../models/AlarmModel');
  */
 exports.getAlarms = function(req, res) {
     console.log(req.userId);
-    Alarm.find({ userId: req.userId, removed: false }, function(err,data) {
+    Alarm.find({ userId: req.userId}, function(err,data) {
         if (err) {
             console.log("Error in finding users" + err);
             return res.send(err);
@@ -61,7 +61,7 @@ exports.getAlarm = [function(req, res, next) {
     },
     function(req, res) {
         Alarm.findOne(
-            { userId: req.userId, uuid: req.params.id, removed: false },
+            { userId: req.userId, uuid: req.params.id},
             function(err,data) {
                 if (err)
                     return res.send(err);
@@ -81,11 +81,11 @@ exports.putAlarm = function(req, res) {
         var alarm = copyValuesOfAlarm(data, req.body);
         alarm.userId = req.userId; // password library makes user object in the request
 
-        alarm.save(function(err, savedAlarm) {
+        alarm.save(function(err) {
             if (err)
                 return res.send(err);
 
-            res.status(200).json({ data: savedAlarm });
+            res.status(200).json({ data: alarm });
         });
     });
 };
