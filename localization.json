@@ -1,5 +1,5 @@
 {
-    "Threat Response": "",
+    "Threat Response": "Threat Response",
     "Trusted Root Certificates": "",
     "Upload Certificate": "",
     "To aid in the detection of mobile threats, various SSL certificates and their issuers are cryptographically analyzed for trust verification using known global root certificate authorities. However, if your mobile infrastructure utilizes in-house or other third-party root certificate authorities, security alerts may be generated unnecessarily.": "",
